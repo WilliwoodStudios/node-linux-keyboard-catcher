@@ -1,0 +1,25 @@
+{
+  "name": "linux-keyboard-catcher",
+  "version": "1.0.0",
+  "description": "A module that reads raw bytes from /dev/input/x and translates them into objects detailing keyboard events.",
+  "main": "keyboardCatcher.js",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node example/consoleDemo.js"
+  },
+  "keywords": [
+    "linux",
+    "keyboard",
+    "exclusive",
+    "magnetic",
+    "stripe",
+    "reader"
+  ],
+  "author": "Williwood Studios",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "ioctl": "^2.0.1",
+    "bindings": "^1.1.1",
+    "nan": "^2.3.2"
+  }
+}
