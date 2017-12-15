@@ -7,7 +7,11 @@ var constants = require('bindings')('linux-keyboard-catcher-platform-constants')
 var keyMaps = require('./keyMap')
 var inputEvent = require('./input-event-codes')
 var inputEventCodes = inputEvent.inputEventCodes
-var keyCodeToName = inputEvent.keyCodeToName
+var keyCodeToName = inputEvent.keyCodeToNam
+
+exports.keyMaps = keyMaps
+exports.inputEventCodes = inputEvent.inputEventCodes
+exports.keyCodeToName = inputEvent.keyCodeToName
 
 const fsOpen = util.promisify(fs.open)
 const fsRead = util.promisify(fs.read)
