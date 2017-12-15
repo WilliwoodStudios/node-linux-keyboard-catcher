@@ -1,6 +1,6 @@
 {
   "name": "linux-keyboard-catcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Keyboard Catcher reads from Linux's keyboard event queues, tracks applied modifiers and offers keyboard mapping.",
   "main": "keyboardCatcher.js",
   "scripts": {
