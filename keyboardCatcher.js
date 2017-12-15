@@ -78,7 +78,7 @@ function LinuxKeyboardCatcher () {
     const blockSize = constants.sizeofInputEvent
     const length = 2000 - 2000 % blockSize
 
-    var buffer = new Buffer(length)
+    var buffer = Buffer.alloc(length)
     var myFileHandle = fileHandle
 
     if (myFileHandle === -1) {
