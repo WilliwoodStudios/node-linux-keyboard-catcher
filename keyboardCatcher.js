@@ -13,45 +13,37 @@ const fsOpen = util.promisify(fs.open)
 const fsRead = util.promisify(fs.read)
 const fsClose = util.promisify(fs.close)
 
-function readInt (buffer, index, length) {
-  var toReturn = 0
-  for (var i = 0; i < length; ++i) {
-    toReturn |= buffer[index + i] << i * 8
-  }
-  return toReturn
-}
-
 var modifiers = new function () {
-  var modifierState = {}
+  var modifierApplied = {}
 
-  modifierState[inputEventCodes.KEY_LEFTSHIFT] = false
-  modifierState[inputEventCodes.KEY_RIGHTSHIFT] = false
-  modifierState[inputEventCodes.KEY_LEFTALT] = false
-  modifierState[inputEventCodes.KEY_RIGHTALT] = false
-  modifierState[inputEventCodes.KEY_LEFTCTRL] = false
-  modifierState[inputEventCodes.KEY_RIGHTCTRL] = false
-  modifierState[inputEventCodes.KEY_LEFTMETA] = false
-  modifierState[inputEventCodes.KEY_RIGHTMETA] = false
+  modifierApplied[inputEventCodes.KEY_LEFTSHIFT] = false
+  modifierApplied[inputEventCodes.KEY_RIGHTSHIFT] = false
+  modifierApplied[inputEventCodes.KEY_LEFTALT] = false
+  modifierApplied[inputEventCodes.KEY_RIGHTALT] = false
+  modifierApplied[inputEventCodes.KEY_LEFTCTRL] = false
+  modifierApplied[inputEventCodes.KEY_RIGHTCTRL] = false
+  modifierApplied[inputEventCodes.KEY_LEFTMETA] = false
+  modifierApplied[inputEventCodes.KEY_RIGHTMETA] = false
 
   this.caps = false
 
   Object.defineProperty(this, 'shift', {
-    get: () => modifierState[inputEventCodes.KEY_LEFTSHIFT] || modifierState[inputEventCodes.KEY_RIGHTSHIFT]
+    get: () => modifierApplied[inputEventCodes.KEY_LEFTSHIFT] || modifierApplied[inputEventCodes.KEY_RIGHTSHIFT]
   })
   Object.defineProperty(this, 'alt', {
-    get: () => modifierState[inputEventCodes.KEY_LEFTALT] || modifierState[inputEventCodes.KEY_RIGHTALT]
+    get: () => modifierApplied[inputEventCodes.KEY_LEFTALT] || modifierApplied[inputEventCodes.KEY_RIGHTALT]
   })
   Object.defineProperty(this, 'control', {
-    get: () => modifierState[inputEventCodes.KEY_LEFTCTRL] || modifierState[inputEventCodes.KEY_RIGHTCTRL]
+    get: () => modifierApplied[inputEventCodes.KEY_LEFTCTRL] || modifierApplied[inputEventCodes.KEY_RIGHTCTRL]
   })
   Object.defineProperty(this, 'meta', {
-    get: () => modifierState[inputEventCodes.KEY_LEFTMETA] || modifierState[inputEventCodes.KEY_RIGHTMETA]
+    get: () => modifierApplied[inputEventCodes.KEY_LEFTMETA] || modifierApplied[inputEventCodes.KEY_RIGHTMETA]
   })
 
   this.handleModifier = function (type, code, value) {
     if (type === inputEventCodes.EV_KEY) {
-      if (code in modifierState) {
-        modifierState[code] = value !== 0
+      if (code in modifierApplied) {
+        modifierApplied[code] = value !== 0
       }
     } else if (type === inputEventCodes.EV_LED) {
       if (code === inputEventCodes.LED_CAPSL) {
@@ -94,9 +86,9 @@ function LinuxKeyboardCatcher () {
         var bytesRead = (await fsRead(myFileHandle, buffer, 0, length, null)).bytesRead
 
         for (var offset = 0; offset + blockSize < bytesRead; offset += blockSize) {
-          var type = readInt(buffer, offset + blockSize - 8, 2)
-          var code = readInt(buffer, offset + blockSize - 6, 2)
-          var value = readInt(buffer, offset + blockSize - 4, 4)
+          var type = buffer.readUInt16LE(offset + blockSize - 8)
+          var code = buffer.readUInt16LE(offset + blockSize - 6, 2)
+          var value = buffer.readInt32LE(offset + blockSize - 4, 4)
           modifiers.handleModifier(type, code, value)
           if (type === inputEventCodes.EV_KEY) {
             var keyEvent = modifiers.clone()
