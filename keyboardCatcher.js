@@ -7,7 +7,7 @@ var constants = require('bindings')('linux-keyboard-catcher-platform-constants')
 var keyMaps = require('./keyMap')
 var inputEvent = require('./input-event-codes')
 var inputEventCodes = inputEvent.inputEventCodes
-var keyCodeToName = inputEvent.keyCodeToNam
+var keyCodeToName = inputEvent.keyCodeToName
 
 exports.keyMaps = keyMaps
 exports.inputEventCodes = inputEvent.inputEventCodes
@@ -78,7 +78,7 @@ function LinuxKeyboardCatcher () {
     const blockSize = constants.sizeofInputEvent
     const length = 2000 - 2000 % blockSize
 
-    var buffer = new Uint8Array(length)
+    var buffer = new Buffer(length)
     var myFileHandle = fileHandle
 
     if (myFileHandle === -1) {
